@@ -387,8 +387,13 @@ function lockIn(i){
   stopActiveTimer();
   S.submitted[i]=true;
   S.attempted++;
-  renderQuestion(i);
   updateChrome();
+  const nx=findNext(i);
+  if(nx!==null){
+    setTimeout(()=>goTo(nx),400);
+  }else{
+    renderQuestion(i);
+  }
 }
 function findNext(from){
   for(let j=1;j<=Q;j++){const idx=(from+j)%Q;if(!S.submitted[idx])return idx}
