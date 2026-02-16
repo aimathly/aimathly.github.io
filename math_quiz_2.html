@@ -182,11 +182,25 @@
     .stat-value{font-size:1.5rem}
     .analysis-grid{grid-template-columns:1fr}
   }
+  .home-btn{background:rgba(255,255,255,.2);border:none;color:#fff;padding:8px 14px;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:background .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;z-index:1}
+  .home-btn:hover{background:rgba(255,255,255,.35)}
+  .hero-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;position:relative;z-index:1}
+  .hero-top-right{display:flex;align-items:center;gap:10px}
+  .user-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);border-radius:10px;padding:6px 14px;font-size:.82rem;font-weight:700;color:#fff}
+  .logout-btn{background:rgba(255,255,255,.2);border:none;color:#fff;padding:6px 14px;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;transition:background .2s}
+  .logout-btn:hover{background:rgba(255,255,255,.35)}
 </style>
 </head>
 <body>
 
 <header>
+  <div class="hero-top">
+    <a href="index.html" class="home-btn">🏠 Home</a>
+    <div class="hero-top-right">
+      <div class="user-badge"><span>👤</span><span id="quizUserName">Student</span></div>
+      <button class="logout-btn" id="quizLogoutBtn" onclick="window.location.href='index.html'" style="display:none">Sign Out</button>
+    </div>
+  </div>
   <h1>🧠 Math Olympiad Practice #2</h1>
   <p>Grade 5 • 10 Questions • Created on 15 Feb 2026</p>
 </header>
@@ -222,6 +236,7 @@ const questions=[
 
 /* ======= STATE ======= */
 const Q=questions.length;
+const SAVE_KEY='quiz_progress_practice_2';
 const S={
   cur:0,
   timers:Array(Q).fill(0),
@@ -233,6 +248,32 @@ const S={
   finished:false,
   pagePaused:false
 };
+
+/* ======= SAVE/RESTORE PROGRESS ======= */
+function saveProgress(){
+  if(S.finished)return;
+  const data={cur:S.cur,timers:S.timers,selected:S.selected,submitted:S.submitted,visited:S.visited,attempted:S.attempted};
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(data))}catch(e){}
+}
+function restoreProgress(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw)return false;
+    const data=JSON.parse(raw);
+    if(!data||!data.submitted)return false;
+    if(data.attempted>=Q)return false;
+    S.cur=data.cur||0;
+    S.timers=data.timers||Array(Q).fill(0);
+    S.selected=data.selected||Array(Q).fill(null);
+    S.submitted=data.submitted||Array(Q).fill(false);
+    S.visited=data.visited||Array(Q).fill(false);
+    S.attempted=data.attempted||0;
+    return true;
+  }catch(e){return false}
+}
+function clearProgress(){
+  try{localStorage.removeItem(SAVE_KEY)}catch(e){}
+}
 
 /* ======= TIMER MANAGEMENT ======= */
 function startTimerFor(i){
@@ -282,7 +323,14 @@ document.addEventListener('visibilitychange',()=>{
 /* ======= INIT ======= */
 function init(){
   renderNav();
-  goTo(0);
+  const restored=restoreProgress();
+  if(restored&&S.attempted>0){
+    updateChrome();
+    const nx=findNext(S.cur-1<0?Q-1:S.cur-1);
+    goTo(nx!==null?nx:S.cur);
+  }else{
+    goTo(0);
+  }
 }
 
 function renderNav(){
@@ -325,6 +373,7 @@ function goTo(i){
   if(!S.submitted[i]) startTimerFor(i);
   renderQuestion(i);
   updateChrome();
+  saveProgress();
 }
 
 /* ======= RENDER ======= */
@@ -381,6 +430,7 @@ function selectOpt(qi,oi){
   if(S.submitted[qi])return;
   S.selected[qi]=oi;
   renderQuestion(qi);
+  saveProgress();
 }
 function lockIn(i){
   if(S.selected[i]===null)return;
@@ -388,6 +438,7 @@ function lockIn(i){
   S.submitted[i]=true;
   S.attempted++;
   updateChrome();
+  saveProgress();
   const nx=findNext(i);
   if(nx!==null){
     setTimeout(()=>goTo(nx),400);
@@ -415,6 +466,7 @@ function showResults(){
   if(S.attempted<Q)return;
   S.finished=true;
   stopActiveTimer();
+  clearProgress();
 
   let cc=0,tt=0;
   const res=questions.map((q,i)=>{
@@ -534,7 +586,7 @@ init();
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 import{getFirestore,doc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const app=initializeApp({apiKey:"AIzaSyC1nF_1BiUq9PlNrtToxFgPQT9Z3KMv51M",authDomain:"aimathly.firebaseapp.com",projectId:"aimathly",storageBucket:"aimathly.firebasestorage.app",messagingSenderId:"822455826333",appId:"1:822455826333:web:e308eed90c331b73a5e174"});
@@ -544,7 +596,15 @@ const db=getFirestore(app);
 const PRACTICE_ID="practice_2";
 
 let currentUser=null;
-onAuthStateChanged(auth,(user)=>{currentUser=user});
+onAuthStateChanged(auth,(user)=>{
+  currentUser=user;
+  if(user){
+    document.getElementById('quizUserName').textContent=user.displayName||user.email.split('@')[0];
+    const btn=document.getElementById('quizLogoutBtn');
+    btn.style.display='inline-block';
+    btn.onclick=()=>{signOut(auth).then(()=>{window.location.href='index.html'})};
+  }
+});
 
 window.saveResultsToFirestore=async function(correct,wrong,pct,totalTime,details){
   if(!currentUser)return;
