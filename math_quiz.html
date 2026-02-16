@@ -253,8 +253,11 @@ const S={
 function saveProgress(){
   if(S.finished)return;
   const data={cur:S.cur,timers:S.timers,selected:S.selected,submitted:S.submitted,visited:S.visited,attempted:S.attempted};
-  try{localStorage.setItem(SAVE_KEY,JSON.stringify(data))}catch(e){}
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(data));console.log('Progress saved:',S.attempted,'answered')}catch(e){}
 }
+// Save on page exit (Home button, closing tab, etc.)
+window.addEventListener('beforeunload',()=>{if(!S.finished)saveProgress()});
+window.addEventListener('pagehide',()=>{if(!S.finished)saveProgress()});
 function restoreProgress(){
   try{
     const raw=localStorage.getItem(SAVE_KEY);

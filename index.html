@@ -250,7 +250,9 @@ onAuthStateChanged(auth,async(user)=>{
         if(el&&!el.innerHTML){
           try{
             // Check completed (localStorage fallback)
-            const done=localStorage.getItem('quiz_progress_'+pid+'_done');
+            const doneKey='quiz_progress_'+pid+'_done';
+            const done=localStorage.getItem(doneKey);
+            console.log('Checking',pid,': done=',!!done);
             if(done){
               const d=JSON.parse(done);
               const pct=d.percentage;
@@ -264,15 +266,23 @@ onAuthStateChanged(auth,async(user)=>{
               return;
             }
             // Check in-progress
-            const progress=localStorage.getItem('quiz_progress_'+pid);
+            const progressKey='quiz_progress_'+pid;
+            const progress=localStorage.getItem(progressKey);
+            console.log('Checking',pid,': progress=',!!progress);
             if(progress){
               const p=JSON.parse(progress);
-              if(p.attempted&&p.attempted>0){
-                el.innerHTML=`<span class="score-badge score-badge-progress">📝 In Progress (${p.attempted}/10 answered)</span>`;
+              const answered=p.attempted||0;
+              const visited=p.visited?p.visited.filter(Boolean).length:0;
+              console.log('Progress data:',pid,'attempted=',answered,'visited=',visited);
+              if(answered>0){
+                el.innerHTML=`<span class="score-badge score-badge-progress">📝 In Progress (${answered}/10 answered)</span>`;
+                return;
+              }else if(visited>0){
+                el.innerHTML=`<span class="score-badge score-badge-progress">📝 In Progress</span>`;
                 return;
               }
             }
-          }catch(e){}
+          }catch(e){console.log('Score check error for',pid,e)}
           el.innerHTML='<span class="score-badge score-badge-none">Not attempted yet</span>';
         }
       });
