@@ -335,11 +335,13 @@ document.addEventListener('visibilitychange',()=>{
 function init(){
   renderNav();
   const done=getCompleted();
+  console.log('Init: completed data =',done);
   if(done&&done.selected){
     S.selected=done.selected;
     S.timers=done.timers||Array(Q).fill(0);
     S.submitted=Array(Q).fill(true);
     S.attempted=Q;
+    console.log('Replaying results from saved data');
     showResults(true);
     return;
   }
@@ -495,6 +497,14 @@ function showResults(isReplay){
   });
   const wc=Q-cc,pct=Math.round(cc/Q*100);
 
+  if(!isReplay){
+    try{
+      const saveData=JSON.stringify({correct:cc,percentage:pct,date:new Date().toISOString(),selected:S.selected.slice(),timers:S.timers.slice()});
+      localStorage.setItem(SAVE_KEY+'_done',saveData);
+      console.log('Quiz completed and saved to localStorage',SAVE_KEY+'_done');
+    }catch(e){console.error('Failed to save completion:',e)}
+  }
+
   let emoji,title,sub;
   if(pct>=90){emoji='🏆';title='Outstanding!';sub='You crushed it!'}
   else if(pct>=70){emoji='🌟';title='Great Work!';sub='Really impressive — keep going!'}
@@ -598,7 +608,6 @@ function showResults(isReplay){
   window.scrollTo({top:0,behavior:'smooth'});
 
   if(!isReplay){
-    markCompleted(cc,pct);
     function trySave(retries){
       if(typeof saveResultsToFirestore==='function'){
         saveResultsToFirestore(cc,wc,pct,tt,res);

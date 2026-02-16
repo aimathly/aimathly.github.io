@@ -87,6 +87,7 @@
   .score-badge-ok{background:#FFF3E0;color:#E65100}
   .score-badge-low{background:#FDE8EE;color:#be123c}
   .score-badge-none{background:var(--bg);color:var(--text-light);border:1px solid var(--border)}
+  .score-badge-progress{background:#EDE7F6;color:#5E35B1;border:1px solid #CE93D8}
   .coming-soon-card{background:var(--card);border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;opacity:.7}
   .coming-soon-icon{font-size:2rem;margin-bottom:8px}
   .coming-soon-text{font-family:'Fredoka',sans-serif;font-weight:600;font-size:1rem;color:var(--text-light)}
@@ -243,15 +244,15 @@ onAuthStateChanged(auth,async(user)=>{
         el.innerHTML=`<span class="score-badge ${cls}">${icon} Last: ${correct}/10 (${pct}%)</span>`;
       });
 
-      // Mark unplayed ones
+      // Mark unplayed / in-progress ones
       ['practice_1','practice_2','practice_3'].forEach(pid=>{
         const el=document.getElementById('score_'+pid);
         if(el&&!el.innerHTML){
-          // Check localStorage fallback
           try{
-            const local=localStorage.getItem('quiz_progress_'+pid+'_done');
-            if(local){
-              const d=JSON.parse(local);
+            // Check completed (localStorage fallback)
+            const done=localStorage.getItem('quiz_progress_'+pid+'_done');
+            if(done){
+              const d=JSON.parse(done);
               const pct=d.percentage;
               const correct=d.correct;
               let cls,icon;
@@ -261,6 +262,15 @@ onAuthStateChanged(auth,async(user)=>{
               else{cls='score-badge-low';icon='💪'}
               el.innerHTML=`<span class="score-badge ${cls}">${icon} Last: ${correct}/10 (${pct}%)</span>`;
               return;
+            }
+            // Check in-progress
+            const progress=localStorage.getItem('quiz_progress_'+pid);
+            if(progress){
+              const p=JSON.parse(progress);
+              if(p.attempted&&p.attempted>0){
+                el.innerHTML=`<span class="score-badge score-badge-progress">📝 In Progress (${p.attempted}/10 answered)</span>`;
+                return;
+              }
             }
           }catch(e){}
           el.innerHTML='<span class="score-badge score-badge-none">Not attempted yet</span>';
