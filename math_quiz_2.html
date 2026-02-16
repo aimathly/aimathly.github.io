@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Olympiad Practice #2 — Grade 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF8F0;
+    --card: #FFFFFF;
+    --primary: #FF6B35;
+    --primary-light: #FFF0E8;
+    --secondary: #2EC4B6;
+    --secondary-light: #E6FAF8;
+    --accent: #FFD166;
+    --accent-light: #FFF8E1;
+    --correct: #06D6A0;
+    --correct-bg: #E6FBF4;
+    --wrong: #EF476F;
+    --wrong-bg: #FDE8EE;
+    --text: #2B2D42;
+    --text-light: #6B7194;
+    --border: #E8E0D8;
+    --shadow: 0 4px 20px rgba(43,45,66,0.08);
+    --radius: 16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+  body::before{content:'';position:fixed;top:-120px;right:-120px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(255,209,102,.15) 0%,transparent 70%);pointer-events:none;z-index:0}
+  body::after{content:'';position:fixed;bottom:-100px;left:-100px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(46,196,182,.12) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+  header{background:linear-gradient(135deg,var(--primary) 0%,#FF8C5A 100%);padding:28px 32px;text-align:center;position:relative;overflow:hidden}
+  header::before{content:'';position:absolute;top:-50%;left:-10%;width:120%;height:200%;background:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,.04) 20px,rgba(255,255,255,.04) 40px);pointer-events:none}
+  header h1{font-family:'Fredoka',sans-serif;font-weight:700;font-size:2rem;color:#fff;letter-spacing:.5px;position:relative}
+  header p{color:rgba(255,255,255,.9);font-size:.95rem;margin-top:6px;font-weight:600;position:relative}
+
+  .score-bar{display:flex;justify-content:center;gap:28px;padding:14px 24px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.04);flex-wrap:wrap}
+  .score-item{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.92rem}
+  .score-dot{width:11px;height:11px;border-radius:50%}
+
+  .question-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:20px 24px 12px;max-width:800px;margin:0 auto;position:relative;z-index:1}
+  .nav-btn{width:44px;height:44px;border-radius:12px;border:2px solid var(--border);background:var(--card);font-family:'Fredoka',sans-serif;font-weight:600;font-size:1rem;color:var(--text);cursor:pointer;transition:all .2s ease}
+  .nav-btn:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow)}
+  .nav-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 14px rgba(255,107,53,.3)}
+  .nav-btn.submitted-nav{background:var(--secondary);color:#fff;border-color:var(--secondary)}
+  .nav-btn.submitted-nav.active{background:var(--primary);border-color:var(--primary)}
+  .nav-btn.visited-nav{border-color:var(--accent);background:var(--accent-light)}
+  .nav-btn.result-correct{background:var(--correct)!important;color:#fff!important;border-color:var(--correct)!important}
+  .nav-btn.result-wrong{background:var(--wrong)!important;color:#fff!important;border-color:var(--wrong)!important}
+
+  .progress-track{height:4px;background:var(--border)}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--secondary),var(--correct));transition:width .4s ease;border-radius:0 4px 4px 0}
+
+  .question-container{max-width:720px;margin:20px auto 40px;padding:0 20px;position:relative;z-index:1}
+  .question-card{background:var(--card);border-radius:var(--radius);padding:32px;box-shadow:var(--shadow);border:1px solid var(--border);animation:fadeIn .25s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  .question-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:8px}
+  .question-number{font-family:'Fredoka',sans-serif;font-weight:700;font-size:.85rem;color:var(--primary);background:var(--primary-light);padding:6px 14px;border-radius:20px}
+  .topic-badge{font-size:.76rem;font-weight:700;padding:5px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+  .topic-logic{background:#EDE7F6;color:#5E35B1}
+  .topic-math{background:#E3F2FD;color:#1565C0}
+  .topic-everyday{background:#FFF3E0;color:#E65100}
+  .topic-achiever{background:#FCE4EC;color:#C62828}
+
+  .question-text{font-size:1.08rem;line-height:1.7;color:var(--text);margin-bottom:24px;font-weight:600}
+  .question-text .sub-info{display:block;margin-top:8px;font-size:.95rem;color:var(--text-light);font-weight:400}
+
+  .options-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+  .option-btn{display:flex;align-items:center;gap:14px;padding:14px 20px;border:2px solid var(--border);border-radius:12px;background:var(--bg);cursor:pointer;transition:all .2s ease;font-size:1rem;font-weight:600;color:var(--text);text-align:left}
+  .option-btn:hover:not(.disabled){border-color:var(--secondary);background:var(--secondary-light);transform:translateX(4px)}
+  .option-btn.selected{border-color:var(--primary);background:var(--primary-light)}
+  .option-btn.disabled{cursor:default;opacity:.75}
+  .option-btn.show-correct{border-color:var(--correct);background:var(--correct-bg);opacity:1}
+  .option-btn.show-wrong{border-color:var(--wrong);background:var(--wrong-bg);opacity:1}
+  .option-letter{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-weight:700;font-size:.9rem;background:var(--card);border:2px solid var(--border);flex-shrink:0}
+  .option-btn.selected .option-letter{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .option-btn.show-correct .option-letter{background:var(--correct);color:#fff;border-color:var(--correct)}
+  .option-btn.show-wrong .option-letter{background:var(--wrong);color:#fff;border-color:var(--wrong)}
+
+  .timer-section{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:20px;border-top:1px solid var(--border);flex-wrap:wrap}
+  .timer-display{display:flex;align-items:center;gap:10px}
+  .timer-icon{font-size:1.3rem}
+  .timer-value{font-family:'Fredoka',sans-serif;font-size:1.5rem;font-weight:700;color:var(--text);min-width:80px}
+  .timer-value.running{color:var(--primary);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+  .timer-value.paused{color:var(--text-light)}
+
+  /* Pause overlay */
+  .pause-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;background:rgba(43,45,66,.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;animation:fadeIn .3s ease}
+  .pause-content{background:var(--card);border-radius:20px;padding:44px 48px;text-align:center;box-shadow:0 12px 40px rgba(43,45,66,.18);max-width:400px;width:90%}
+  .pause-icon{font-size:3.5rem;margin-bottom:12px}
+  .pause-title{font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.6rem;color:var(--text);margin-bottom:8px}
+  .pause-sub{font-size:.92rem;font-weight:600;color:var(--text-light);line-height:1.6}
+
+  .btn{padding:12px 28px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .2s ease}
+  .btn:hover{transform:translateY(-2px)}
+  .btn:active{transform:translateY(0)}
+  .btn-submit{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(255,107,53,.3)}
+  .btn-submit:hover{background:#e55a28}
+  .btn-submit:disabled{background:#ccc;box-shadow:none;cursor:not-allowed;transform:none}
+  .btn-next{background:var(--secondary);color:#fff;box-shadow:0 4px 14px rgba(46,196,182,.3)}
+  .btn-next:hover{background:#26b0a3}
+  .btn-results{background:linear-gradient(135deg,var(--correct),#2EC4B6);color:#fff;box-shadow:0 4px 14px rgba(6,214,160,.3);font-size:1.05rem;padding:14px 36px}
+
+  .feedback{margin-top:16px;padding:14px 20px;border-radius:12px;font-weight:700;font-size:1rem;display:flex;align-items:center;gap:10px;animation:fadeIn .3s ease}
+  .feedback.submitted-fb{background:var(--accent-light);color:#92730a;border:2px solid var(--accent)}
+
+  /* ====== RESULTS ====== */
+  .results-container{max-width:780px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+  .results-hero{text-align:center;padding:40px 32px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);margin:24px 0;animation:fadeIn .5s ease}
+  .results-emoji{font-size:4rem;margin-bottom:12px}
+  .results-title{font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.8rem;margin-bottom:6px}
+  .results-subtitle{color:var(--text-light);font-weight:600;font-size:1rem;margin-bottom:28px}
+  .results-stats{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+  .stat-box{padding:18px 24px;border-radius:14px;text-align:center;min-width:120px}
+  .stat-box.s-score{background:var(--primary-light)}
+  .stat-box.s-pct{background:var(--secondary-light)}
+  .stat-box.s-time{background:var(--accent-light)}
+  .stat-value{font-family:'Fredoka',sans-serif;font-weight:700;font-size:2rem;line-height:1.1}
+  .s-score .stat-value{color:var(--primary)}
+  .s-pct .stat-value{color:var(--secondary)}
+  .s-time .stat-value{color:#b8860b}
+  .stat-label{font-size:.78rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+
+  .section-title{font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.25rem;margin:32px 0 16px;text-align:center}
+
+  /* Topic Analysis */
+  .analysis-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:12px}
+  .analysis-card{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);border:1px solid var(--border);animation:fadeIn .4s ease}
+  .analysis-topic{font-family:'Fredoka',sans-serif;font-weight:700;font-size:1rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .analysis-row{display:flex;justify-content:space-between;font-size:.88rem;font-weight:600;padding:4px 0;color:var(--text-light)}
+  .analysis-row span:last-child{color:var(--text);font-weight:700}
+  .analysis-bar-track{height:8px;background:var(--border);border-radius:8px;margin:10px 0 6px;overflow:hidden}
+  .analysis-bar-fill{height:100%;border-radius:8px;transition:width .6s ease}
+  .analysis-verdict{font-size:.85rem;font-weight:700;margin-top:8px;padding:6px 12px;border-radius:10px;display:inline-block}
+  .verdict-great{background:var(--correct-bg);color:#047857}
+  .verdict-good{background:#E3F2FD;color:#1565C0}
+  .verdict-improve{background:var(--wrong-bg);color:#be123c}
+
+  .result-item{background:var(--card);border-radius:var(--radius);padding:24px 28px;margin-bottom:16px;box-shadow:var(--shadow);border:1px solid var(--border);animation:fadeIn .4s ease}
+  .result-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+  .result-q-tag{font-family:'Fredoka',sans-serif;font-weight:700;font-size:.85rem;padding:5px 14px;border-radius:20px}
+  .correct-tag{background:var(--correct-bg);color:#047857}
+  .wrong-tag{background:var(--wrong-bg);color:#be123c}
+  .result-q-text{font-size:.95rem;font-weight:600;line-height:1.6;margin-bottom:14px;color:var(--text)}
+  .result-answer-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:.88rem;font-weight:700}
+  .answer-pill{padding:6px 14px;border-radius:10px;font-weight:700;font-size:.86rem}
+  .pill-wrong{background:var(--wrong-bg);color:#be123c}
+  .pill-correct{background:var(--correct-bg);color:#047857}
+  .time-pill{font-size:.82rem;font-weight:700;color:var(--text-light);background:var(--bg);padding:5px 12px;border-radius:20px}
+  .speed-pill{font-size:.82rem;font-weight:700;padding:5px 12px;border-radius:20px}
+  .sp-fast{background:#E6FBF4;color:#047857}
+  .sp-good{background:#E3F2FD;color:#1565C0}
+  .sp-ok{background:#FFF3E0;color:#E65100}
+  .sp-slow{background:var(--wrong-bg);color:#be123c}
+
+  .solution-box{margin-top:14px;padding:16px 18px;border-radius:12px;background:#F0F4FF;border-left:4px solid #5E35B1;font-size:.92rem;line-height:1.7;color:var(--text);font-weight:600}
+  .solution-box strong{color:#5E35B1}
+
+  /* Fraction styling */
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px;font-weight:700;line-height:1;position:relative;top:-1px}
+  .frac .num{border-bottom:2px solid currentColor;padding:0 3px 2px;font-size:.85em}
+  .frac .den{padding:2px 3px 0;font-size:.85em}
+  .frac-inline{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 2px;font-weight:700;line-height:1}
+  .frac-inline .num{border-bottom:1.5px solid currentColor;padding:0 2px 1px;font-size:.8em}
+  .frac-inline .den{padding:1px 2px 0;font-size:.8em}
+
+  .btn-retake{display:inline-block;margin:36px auto;padding:16px 40px;background:linear-gradient(135deg,var(--primary),#FF8C5A);color:#fff;border:none;border-radius:14px;font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.1rem;cursor:pointer;transition:all .2s ease;box-shadow:0 6px 20px rgba(255,107,53,.3)}
+  .btn-retake:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(255,107,53,.4)}
+
+  .hidden{display:none!important}
+
+  @media(max-width:600px){
+    header h1{font-size:1.5rem}
+    .question-card,.result-item{padding:20px}
+    .score-bar{gap:12px;font-size:.82rem;padding:10px 14px}
+    .nav-btn{width:38px;height:38px;font-size:.9rem;border-radius:10px}
+    .results-hero{padding:28px 18px}
+    .stat-box{padding:14px 16px;min-width:90px}
+    .stat-value{font-size:1.5rem}
+    .analysis-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧠 Math Olympiad Practice #2</h1>
+  <p>Grade 5 • 10 Questions • Created on 15 Feb 2026</p>
+</header>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<div class="score-bar" id="scoreBar">
+  <div class="score-item"><div class="score-dot" style="background:var(--primary)"></div> Answered: <span id="scoreAns">0</span>/10</div>
+  <div class="score-item"><div class="score-dot" style="background:var(--border)"></div> Remaining: <span id="scoreRem">10</span></div>
+</div>
+<div class="question-nav" id="questionNav"></div>
+<div class="question-container" id="quizArea"><div class="question-card" id="questionCard"></div></div>
+<div class="pause-overlay hidden" id="pauseOverlay">
+  <div class="pause-content">
+    <div class="pause-icon">⏸️</div>
+    <div class="pause-title">Timer Paused</div>
+    <div class="pause-sub">The timer paused because you left this page.<br>It will resume automatically when you return.</div>
+  </div>
+</div>
+<div class="results-container hidden" id="resultsArea"></div>
+
+<script>
+const questions=[
+  {id:1,topic:"Logical Reasoning",topicClass:"topic-logic",text:"What is the next number in the series?<br><br><strong>7, &nbsp; 11, &nbsp; 19, &nbsp; 31, &nbsp; ?</strong>",sub:"",options:["43","45","47","49"],answer:2,solution:"Differences between terms: 11−7 = 4, 19−11 = 8, 31−19 = 12.<br>The differences increase by 4 each time: 4, 8, 12, <strong>16</strong>.<br>Next term = 31 + 16 = <strong>47 (Option C)</strong>."},
+  {id:2,topic:"Logical Reasoning",topicClass:"topic-logic",text:"Which of the following words CANNOT be formed from the letters of the word <strong>WONDERFUL</strong>?",sub:"",options:["FOUND","WONDER","FOUNDER","LOWERED"],answer:3,solution:"WONDERFUL has letters: W, O, N, D, E, R, F, U, L (each appears once).<br>FOUND → F, O, U, N, D — all available ✓<br>WONDER → W, O, N, D, E, R — all available ✓<br>FOUNDER → F, O, U, N, D, E, R — all available ✓<br>LOWERED → needs two E's (L, O, W, E, R, E, D), but only one E is available ✗<br>Answer: <strong>LOWERED (Option D)</strong>."},
+  {id:3,topic:"Logical Reasoning",topicClass:"topic-logic",text:"If in a certain code language, BRIGHT is written as EULJKW, then how will HOUSE be written in that language?",sub:"",options:["KRXVH","KRVXH","LSYWI","JQWUG"],answer:0,solution:"Each letter shifts forward by 3 in the alphabet:<br>B(2)→E(5), R(18)→U(21), I(9)→L(12), G(7)→J(10), H(8)→K(11), T(20)→W(23).<br>Applying to HOUSE: H→K, O→R, U→X, S→V, E→H = <strong>KRXVH (Option A)</strong>."},
+  {id:4,topic:"Mathematical Reasoning",topicClass:"topic-math",text:"What is 4.738 rounded to the nearest tenth?",sub:"",options:["4.7","4.8","4.74","5.0"],answer:0,solution:"To round to the nearest tenth, look at the hundredths digit (3).<br>Since 3 < 5, round down.<br>4.738 rounded to the nearest tenth = <strong>4.7 (Option A)</strong>."},
+  {id:5,topic:"Mathematical Reasoning",topicClass:"topic-math",text:"What is the least common multiple (LCM) of 12 and 18?",sub:"",options:["24","36","54","72"],answer:1,solution:"Factors: 12 = 2 × 2 × 3, and 18 = 2 × 3 × 3.<br>LCM = take the highest power of each prime: 2² × 3² = 4 × 9 = <strong>36 (Option B)</strong>."},
+  {id:6,topic:"Mathematical Reasoning",topicClass:"topic-math",text:"A rectangle has a length of 18 cm and a width of 12 cm. What is its area?",sub:"",options:["60 sq. cm","216 sq. cm","180 sq. cm","120 sq. cm"],answer:1,solution:"Area of a rectangle = length × width = 18 × 12 = <strong>216 sq. cm (Option B)</strong>."},
+  {id:7,topic:"Everyday Mathematics",topicClass:"topic-everyday",text:"A shopkeeper buys 45 toys at $8 each and sells all of them at $11 each. What is the total profit?",sub:"",options:["$115","$135","$145","$125"],answer:1,solution:"Cost price = 45 × $8 = $360.<br>Selling price = 45 × $11 = $495.<br>Profit = $495 − $360 = <strong>$135 (Option B)</strong>."},
+  {id:8,topic:"Everyday Mathematics",topicClass:"topic-everyday",text:"A movie starts at 10:45 AM and lasts 2 hours 35 minutes. What time does it end?",sub:"",options:["1:10 PM","1:20 PM","1:15 PM","12:20 PM"],answer:1,solution:"10:45 AM + 2 hours = 12:45 PM.<br>12:45 PM + 35 minutes = 1:20 PM.<br>Answer: <strong>1:20 PM (Option B)</strong>."},
+  {id:9,topic:"Everyday Mathematics",topicClass:"topic-everyday",text:"Three bags weigh 2.5 kg, 1.75 kg and 3.25 kg. A box can hold a maximum of 6 kg. By how much does the total weight of the bags exceed the box limit?",sub:"",options:["1.25 kg","1.75 kg","1.5 kg","2 kg"],answer:2,solution:"Total weight = 2.5 + 1.75 + 3.25 = 7.5 kg.<br>Box limit = 6 kg.<br>Excess = 7.5 − 6 = <strong>1.5 kg (Option C)</strong>."},
+  {id:10,topic:"Achievers Section",topicClass:"topic-achiever",text:'Amy has 120 chocolates. She gives <span class="frac-inline"><span class="num">1</span><span class="den">4</span></span> of them to Ben. From the remaining, she gives <span class="frac-inline"><span class="num">1</span><span class="den">3</span></span> to Cara. How many chocolates does Amy have left?',sub:"",options:["60","50","70","45"],answer:0,solution:'Given to Ben = <span class="frac-inline"><span class="num">1</span><span class="den">4</span></span> of 120 = 30.<br>Remaining = 120 − 30 = 90.<br>Given to Cara = <span class="frac-inline"><span class="num">1</span><span class="den">3</span></span> of 90 = 30.<br>Left with Amy = 90 − 30 = <strong>60 (Option A)</strong>.'}
+];
+
+/* ======= STATE ======= */
+const Q=questions.length;
+const S={
+  cur:0,
+  timers:Array(Q).fill(0),
+  interval:null,
+  selected:Array(Q).fill(null),
+  submitted:Array(Q).fill(false),
+  visited:Array(Q).fill(false),
+  attempted:0,
+  finished:false,
+  pagePaused:false
+};
+
+/* ======= TIMER MANAGEMENT ======= */
+function startTimerFor(i){
+  stopActiveTimer();
+  S.pagePaused=false;
+  S.interval=setInterval(()=>{
+    S.timers[i]++;
+    const el=document.getElementById('timerDisplay');
+    if(el){
+      const m=Math.floor(S.timers[i]/60);
+      el.textContent=m===0?'< 1 min':`${m} min`;
+    }
+  },1000);
+}
+function stopActiveTimer(){
+  if(S.interval){clearInterval(S.interval);S.interval=null}
+}
+
+/* ======= PAGE VISIBILITY (pause on minimize/tab switch) ======= */
+document.addEventListener('visibilitychange',()=>{
+  if(S.finished)return;
+  if(document.hidden){
+    // Page hidden — pause timer
+    if(S.interval){
+      stopActiveTimer();
+      S.pagePaused=true;
+      // Update display to show paused state
+      const el=document.getElementById('timerDisplay');
+      if(el){el.classList.remove('running');el.classList.add('paused');el.textContent='⏸ Paused'}
+      // Show pause overlay
+      const overlay=document.getElementById('pauseOverlay');
+      if(overlay)overlay.classList.remove('hidden');
+    }
+  }else{
+    // Page visible again — resume timer if it was paused
+    if(S.pagePaused&&!S.submitted[S.cur]){
+      S.pagePaused=false;
+      startTimerFor(S.cur);
+      // Hide pause overlay
+      const overlay=document.getElementById('pauseOverlay');
+      if(overlay)overlay.classList.add('hidden');
+      renderQuestion(S.cur);
+    }
+  }
+});
+
+/* ======= INIT ======= */
+function init(){
+  renderNav();
+  goTo(0);
+}
+
+function renderNav(){
+  const nav=document.getElementById('questionNav');
+  nav.innerHTML='';
+  questions.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.className='nav-btn';b.textContent=i+1;b.id=`nav-${i}`;
+    b.onclick=()=>goTo(i);
+    nav.appendChild(b);
+  });
+}
+
+function updateChrome(){
+  questions.forEach((_,i)=>{
+    const b=document.getElementById(`nav-${i}`);
+    if(!b)return;
+    b.className='nav-btn';
+    if(i===S.cur&&!S.finished)b.classList.add('active');
+    if(S.submitted[i]&&!S.finished)b.classList.add('submitted-nav');
+    else if(S.visited[i]&&!S.submitted[i]&&i!==S.cur&&!S.finished)b.classList.add('visited-nav');
+    if(S.finished){
+      b.classList.add(S.selected[i]===questions[i].answer?'result-correct':'result-wrong');
+    }
+  });
+  document.getElementById('progressFill').style.width=`${(S.attempted/Q)*100}%`;
+  document.getElementById('scoreAns').textContent=S.attempted;
+  document.getElementById('scoreRem').textContent=Q-S.attempted;
+}
+
+/* ======= NAVIGATION ======= */
+function goTo(i){
+  if(S.finished)return;
+  stopActiveTimer();
+  S.pagePaused=false;
+  const overlay=document.getElementById('pauseOverlay');
+  if(overlay)overlay.classList.add('hidden');
+  S.cur=i;
+  S.visited[i]=true;
+  if(!S.submitted[i]) startTimerFor(i);
+  renderQuestion(i);
+  updateChrome();
+}
+
+/* ======= RENDER ======= */
+function renderQuestion(i){
+  const q=questions[i];
+  const done=S.submitted[i];
+  const isActive=!done; // timer is running if not submitted
+
+  const optionsHTML=q.options.map((opt,oi)=>{
+    let cls='option-btn';
+    if(done){cls+=' disabled';if(oi===S.selected[i])cls+=' selected'}
+    else if(S.selected[i]===oi)cls+=' selected';
+    return`<button class="${cls}" onclick="selectOpt(${i},${oi})"><span class="option-letter">${L(oi)}</span><span>${opt}</span></button>`;
+  }).join('');
+
+  let feedbackHTML='';
+  if(done){
+    feedbackHTML=`<div class="feedback submitted-fb"><span style="font-size:1.3rem">📝</span><div><strong>Answer saved!</strong><br><span style="font-weight:600;font-size:.86rem;opacity:.8">Results shown after all ${Q} questions.</span></div></div>`;
+  }
+
+  const m=Math.floor(S.timers[i]/60);
+  const timerText=done?fmtTime(S.timers[i]):(m===0?'< 1 min':`${m} min`);
+  const timerCls=done?'paused':(isActive?'running':'paused');
+
+  let actionHTML='';
+  if(!done){
+    actionHTML=`<button class="btn btn-submit" onclick="lockIn(${i})" ${S.selected[i]===null?'disabled':''}>Lock In Answer</button>`;
+  }
+
+  let nextHTML='';
+  if(done){
+    const nx=findNext(i);
+    if(nx!==null){
+      nextHTML=`<div style="text-align:center;margin-top:16px"><button class="btn btn-next" onclick="goTo(${nx})">Next Question →</button></div>`;
+    }else{
+      nextHTML=`<div style="text-align:center;margin-top:16px"><button class="btn btn-results" onclick="showResults()">🎉 See My Results</button></div>`;
+    }
+  }
+
+  document.getElementById('questionCard').innerHTML=`
+    <div class="question-header">
+      <span class="question-number">Question ${i+1} of ${Q}</span>
+      <span class="topic-badge ${q.topicClass}">${q.topic}</span>
+    </div>
+    <div class="question-text">${q.text}${q.sub?`<span class="sub-info">${q.sub}</span>`:''}</div>
+    <div class="options-grid">${optionsHTML}</div>
+    <div class="timer-section">
+      <div class="timer-display">
+        <span class="timer-icon">⏱️</span>
+        <span class="timer-value ${timerCls}" id="timerDisplay">${timerText}</span>
+      </div>
+      ${actionHTML}
+    </div>
+    ${feedbackHTML}${nextHTML}`;
+}
+
+/* ======= ACTIONS ======= */
+function selectOpt(qi,oi){
+  if(S.submitted[qi])return;
+  S.selected[qi]=oi;
+  renderQuestion(qi);
+}
+function lockIn(i){
+  if(S.selected[i]===null)return;
+  stopActiveTimer();
+  S.submitted[i]=true;
+  S.attempted++;
+  renderQuestion(i);
+  updateChrome();
+}
+function findNext(from){
+  for(let j=1;j<=Q;j++){const idx=(from+j)%Q;if(!S.submitted[idx])return idx}
+  return null;
+}
+
+/* ======= HELPERS ======= */
+function L(i){return String.fromCharCode(65+i)}
+function fmtTime(s){const m=Math.floor(s/60);const sec=s%60;return m===0?`${sec} sec`:`${m} min ${sec} sec`}
+function speedInfo(t){
+  if(t<=30)return{icon:'⚡',label:'Blazing fast!',cls:'sp-fast'};
+  if(t<=60)return{icon:'🌟',label:'Great speed',cls:'sp-good'};
+  if(t<=120)return{icon:'👍',label:'Good, could be faster',cls:'sp-ok'};
+  return{icon:'🐢',label:'Slow — practice more',cls:'sp-slow'};
+}
+
+/* ======= RESULTS ======= */
+function showResults(){
+  if(S.attempted<Q)return;
+  S.finished=true;
+  stopActiveTimer();
+
+  let cc=0,tt=0;
+  const res=questions.map((q,i)=>{
+    const ok=S.selected[i]===q.answer;if(ok)cc++;tt+=S.timers[i];
+    return{i,ok,sel:S.selected[i],t:S.timers[i]};
+  });
+  const wc=Q-cc,pct=Math.round(cc/Q*100);
+
+  let emoji,title,sub;
+  if(pct>=90){emoji='🏆';title='Outstanding!';sub='You crushed it!'}
+  else if(pct>=70){emoji='🌟';title='Great Work!';sub='Really impressive — keep going!'}
+  else if(pct>=50){emoji='👍';title='Good Effort!';sub='Review the solutions below to level up.'}
+  else{emoji='💪';title='Keep Practicing!';sub='Study the solutions and try again!'}
+
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('questionNav').classList.add('hidden');
+  document.getElementById('scoreBar').innerHTML=`
+    <div class="score-item"><div class="score-dot" style="background:var(--correct)"></div> Correct: ${cc}</div>
+    <div class="score-item"><div class="score-dot" style="background:var(--wrong)"></div> Wrong: ${wc}</div>
+    <div class="score-item"><div class="score-dot" style="background:var(--primary)"></div> Score: ${pct}%</div>`;
+  document.getElementById('progressFill').style.width='100%';
+
+  // === TOPIC ANALYSIS ===
+  const topics={};
+  questions.forEach((q,i)=>{
+    if(!topics[q.topic])topics[q.topic]={correct:0,total:0,totalTime:0,cls:q.topicClass};
+    topics[q.topic].total++;
+    topics[q.topic].totalTime+=S.timers[i];
+    if(S.selected[i]===q.answer)topics[q.topic].correct++;
+  });
+
+  let analysisHTML='<div class="analysis-grid">';
+  for(const[name,d] of Object.entries(topics)){
+    const tPct=Math.round(d.correct/d.total*100);
+    const avgT=Math.round(d.totalTime/d.total);
+    let barColor,verdict,verdictCls;
+    if(tPct>=80){barColor='var(--correct)';verdict='Excellent — keep it up!';verdictCls='verdict-great'}
+    else if(tPct>=50){barColor='var(--secondary)';verdict='Good — room to improve';verdictCls='verdict-good'}
+    else{barColor='var(--wrong)';verdict='Needs more practice';verdictCls='verdict-improve'}
+
+    analysisHTML+=`
+      <div class="analysis-card">
+        <div class="analysis-topic"><span class="topic-badge ${d.cls}">${name}</span></div>
+        <div class="analysis-row"><span>Accuracy</span><span>${d.correct}/${d.total} (${tPct}%)</span></div>
+        <div class="analysis-bar-track"><div class="analysis-bar-fill" style="width:${tPct}%;background:${barColor}"></div></div>
+        <div class="analysis-row"><span>Avg time per question</span><span>${fmtTime(avgT)}</span></div>
+        <div class="analysis-row"><span>Total time</span><span>${fmtTime(d.totalTime)}</span></div>
+        <div class="analysis-verdict ${verdictCls}">${verdict}</div>
+      </div>`;
+  }
+  analysisHTML+='</div>';
+
+  // === BUILD FULL HTML ===
+  let html=`
+    <div class="results-hero">
+      <div class="results-emoji">${emoji}</div>
+      <div class="results-title">${title}</div>
+      <div class="results-subtitle">${sub}</div>
+      <div class="results-stats">
+        <div class="stat-box s-score"><div class="stat-value">${cc}/${Q}</div><div class="stat-label">Score</div></div>
+        <div class="stat-box s-pct"><div class="stat-value">${pct}%</div><div class="stat-label">Percentage</div></div>
+        <div class="stat-box s-time"><div class="stat-value">${fmtTime(tt)}</div><div class="stat-label">Total Time</div></div>
+      </div>
+    </div>
+    <div class="section-title">📊 Topic-wise Analysis</div>
+    ${analysisHTML}`;
+
+  // Correct
+  const cList=res.filter(r=>r.ok);
+  if(cList.length){
+    html+=`<div class="section-title">✅ Correct Answers (${cList.length})</div>`;
+    cList.forEach(r=>{
+      const q=questions[r.i],sp=speedInfo(r.t);
+      html+=`<div class="result-item">
+        <div class="result-item-header"><span class="result-q-tag correct-tag">Q${r.i+1} ✓</span><span class="topic-badge ${q.topicClass}" style="font-size:.72rem">${q.topic}</span></div>
+        <div class="result-q-text">${q.text}</div>
+        <div class="result-answer-row">
+          <span class="answer-pill pill-correct">✓ ${L(r.sel)}. ${q.options[r.sel]}</span>
+          <span class="time-pill">⏱️ ${fmtTime(r.t)}</span>
+          <span class="speed-pill ${sp.cls}">${sp.icon} ${sp.label}</span>
+        </div></div>`;
+    });
+  }
+
+  // Wrong + solutions
+  const wList=res.filter(r=>!r.ok);
+  if(wList.length){
+    html+=`<div class="section-title">❌ Incorrect Answers (${wList.length}) — Solutions</div>`;
+    wList.forEach(r=>{
+      const q=questions[r.i];
+      html+=`<div class="result-item">
+        <div class="result-item-header"><span class="result-q-tag wrong-tag">Q${r.i+1} ✗</span><span class="topic-badge ${q.topicClass}" style="font-size:.72rem">${q.topic}</span></div>
+        <div class="result-q-text">${q.text}</div>
+        <div class="result-answer-row" style="margin-bottom:8px">
+          <span class="answer-pill pill-wrong">Your answer: ${L(r.sel)}. ${q.options[r.sel]}</span>
+          <span class="answer-pill pill-correct">Correct: ${L(q.answer)}. ${q.options[q.answer]}</span>
+          <span class="time-pill">⏱️ ${fmtTime(r.t)}</span>
+        </div>
+        <div class="solution-box"><strong>Solution:</strong><br>${q.solution}</div>
+      </div>`;
+    });
+  }
+
+  html+=`<div style="text-align:center;padding-bottom:48px"><button class="btn-retake" onclick="location.reload()">🔄 Retake Quiz</button></div>`;
+
+  const area=document.getElementById('resultsArea');
+  area.classList.remove('hidden');
+  area.innerHTML=html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+init();
+</script>
+</body>
+</html>

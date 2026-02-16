@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Practice Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FEFCF8;
+    --card: #FFFFFF;
+    --primary: #FF6B35;
+    --primary-light: #FFF0E8;
+    --secondary: #2EC4B6;
+    --secondary-light: #E6FAF8;
+    --accent: #FFD166;
+    --accent-light: #FFF8E1;
+    --text: #2B2D42;
+    --text-light: #6B7194;
+    --border: #E8E0D8;
+    --shadow: 0 4px 24px rgba(43,45,66,0.07);
+    --shadow-hover: 0 8px 32px rgba(43,45,66,0.13);
+    --radius: 18px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Decorative blobs */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -150px; right: -100px;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,209,102,0.12) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -120px; left: -80px;
+    width: 420px; height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(46,196,182,0.1) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, #FF8C5A 50%, var(--accent) 100%);
+    padding: 52px 32px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -10%;
+    width: 120%; height: 200%;
+    background: repeating-linear-gradient(
+      45deg, transparent, transparent 24px,
+      rgba(255,255,255,0.04) 24px, rgba(255,255,255,0.04) 48px
+    );
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 28px;
+    background: var(--bg);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  }
+  .hero-icon {
+    font-size: 3.2rem;
+    margin-bottom: 10px;
+    position: relative;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .hero h1 {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 2.2rem;
+    color: #fff;
+    letter-spacing: 0.5px;
+    position: relative;
+    margin-bottom: 8px;
+  }
+  .hero p {
+    color: rgba(255,255,255,0.92);
+    font-size: 1.05rem;
+    font-weight: 600;
+    position: relative;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Stats ribbon */
+  .stats-ribbon {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: -18px auto 0;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+    padding: 0 20px;
+  }
+  .stat-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 24px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 150px;
+    justify-content: center;
+  }
+  .stat-chip-icon { font-size: 1.4rem; }
+  .stat-chip-text {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--text);
+  }
+  .stat-chip-text span {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* Main content */
+  .main {
+    max-width: 820px;
+    margin: 36px auto 48px;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    color: var(--text);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Practice cards */
+  .practice-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .practice-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    position: relative;
+  }
+  .practice-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-3px);
+    border-color: var(--primary);
+  }
+  .practice-card:hover .card-arrow {
+    transform: translateX(4px);
+    color: var(--primary);
+  }
+
+  .card-stripe {
+    height: 5px;
+    width: 100%;
+  }
+  .stripe-1 { background: linear-gradient(90deg, var(--primary), var(--accent)); }
+  .stripe-2 { background: linear-gradient(90deg, var(--secondary), #7DD3C8); }
+  .stripe-3 { background: linear-gradient(90deg, #A78BFA, #818CF8); }
+  .stripe-4 { background: linear-gradient(90deg, #F472B6, #FB923C); }
+  .stripe-5 { background: linear-gradient(90deg, #34D399, var(--secondary)); }
+
+  .card-body {
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .card-info { flex: 1; }
+
+  .card-title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--text);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .card-number-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 8px;
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--text-light);
+  }
+  .card-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .card-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .topic-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .tag-logic { background: #EDE7F6; color: #5E35B1; }
+  .tag-math { background: #E3F2FD; color: #1565C0; }
+  .tag-everyday { background: #FFF3E0; color: #E65100; }
+  .tag-achiever { background: #FCE4EC; color: #C62828; }
+
+  .card-arrow {
+    font-size: 1.5rem;
+    color: var(--border);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  /* Coming soon card */
+  .coming-soon-card {
+    background: var(--card);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    opacity: 0.7;
+  }
+  .coming-soon-icon { font-size: 2rem; margin-bottom: 8px; }
+  .coming-soon-text {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-light);
+  }
+  .coming-soon-sub {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-light);
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 24px 20px 36px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-light);
+    opacity: 0.6;
+  }
+
+  /* Staggered entrance animation */
+  .practice-card, .coming-soon-card {
+    animation: slideUp 0.4s ease both;
+  }
+  .practice-card:nth-child(1) { animation-delay: 0.1s; }
+  .practice-card:nth-child(2) { animation-delay: 0.2s; }
+  .practice-card:nth-child(3) { animation-delay: 0.3s; }
+  .coming-soon-card { animation-delay: 0.4s; }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 40px 20px 36px; }
+    .hero h1 { font-size: 1.7rem; }
+    .hero p { font-size: 0.95rem; }
+    .stat-chip { padding: 10px 16px; min-width: 120px; }
+    .card-body { padding: 18px 20px; }
+    .card-title { font-size: 1.05rem; }
+    .stats-ribbon { gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-icon">🧠</div>
+  <h1>Math Practice Hub</h1>
+  <p>Grade 5 interactive practice quizzes inspired by the SOF International Mathematics Olympiad</p>
+</div>
+
+<div class="stats-ribbon">
+  <div class="stat-chip">
+    <div class="stat-chip-icon">📝</div>
+    <div class="stat-chip-text">2<span>Quizzes Available</span></div>
+  </div>
+  <div class="stat-chip">
+    <div class="stat-chip-icon">❓</div>
+    <div class="stat-chip-text">20<span>Total Questions</span></div>
+  </div>
+  <div class="stat-chip">
+    <div class="stat-chip-icon">📚</div>
+    <div class="stat-chip-text">4<span>Topic Areas</span></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="section-title">📋 Practice Quizzes</div>
+
+  <div class="practice-grid">
+
+    <!-- Practice #1 -->
+    <a class="practice-card" href="math_quiz.html">
+      <div class="card-stripe stripe-1"></div>
+      <div class="card-body">
+        <div class="card-info">
+          <div class="card-title">
+            Practice #1
+            <span class="card-number-badge">10 Questions</span>
+          </div>
+          <div class="card-meta">
+            <div class="card-meta-item">📅 14 Feb 2026</div>
+            <div class="card-meta-item">⏱️ ~15 min</div>
+            <div class="card-meta-item">⭐ Mixed difficulty</div>
+          </div>
+          <div class="card-topics">
+            <span class="topic-tag tag-logic">Logical Reasoning</span>
+            <span class="topic-tag tag-math">Mathematical Reasoning</span>
+            <span class="topic-tag tag-everyday">Everyday Math</span>
+            <span class="topic-tag tag-achiever">Achievers</span>
+          </div>
+        </div>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- Practice #2 -->
+    <a class="practice-card" href="math_quiz_2.html">
+      <div class="card-stripe stripe-2"></div>
+      <div class="card-body">
+        <div class="card-info">
+          <div class="card-title">
+            Practice #2
+            <span class="card-number-badge">10 Questions</span>
+          </div>
+          <div class="card-meta">
+            <div class="card-meta-item">📅 15 Feb 2026</div>
+            <div class="card-meta-item">⏱️ ~15 min</div>
+            <div class="card-meta-item">⭐ Mixed difficulty</div>
+          </div>
+          <div class="card-topics">
+            <span class="topic-tag tag-logic">Logical Reasoning</span>
+            <span class="topic-tag tag-math">Mathematical Reasoning</span>
+            <span class="topic-tag tag-everyday">Everyday Math</span>
+            <span class="topic-tag tag-achiever">Achievers</span>
+          </div>
+        </div>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- Coming Soon placeholder -->
+    <div class="coming-soon-card">
+      <div class="coming-soon-icon">🚀</div>
+      <div class="coming-soon-text">More practice quizzes coming soon!</div>
+      <div class="coming-soon-sub">Check back later for Practice #2, #3, and more.</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  Math Practice Hub • Grade 5 • Based on SOF IMO 2019-20 Pattern
+</div>
+
+</body>
+</html>
