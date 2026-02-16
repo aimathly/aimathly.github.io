@@ -217,7 +217,7 @@ const questions=[
   {id:7,topic:"Everyday Mathematics",topicClass:"topic-everyday",text:"An NGO earned $6,250 per month with $4,380 per month in expenses. How much was saved in one year?",sub:"",options:["$22,440","$23,400","$21,840","$24,440"],answer:0,solution:"Monthly savings = $6,250 − $4,380 = $1,870. Yearly = $1,870 × 12 = <strong>$22,440 (Option A)</strong>."},
   {id:8,topic:"Everyday Mathematics",topicClass:"topic-everyday",text:'Kavya works 52 hours Mon–Sat. She worked 7<span class="frac-inline"><span class="num">1</span><span class="den">2</span></span> hrs Tue, 10 hrs Wed, 8 hrs Thu, 6<span class="frac-inline"><span class="num">1</span><span class="den">2</span></span> hrs Sat. Hours on Monday + Friday together?',sub:"",options:["18 hours","20 hours","22 hours",'19<span class="frac-inline"><span class="num">1</span><span class="den">2</span></span> hours'],answer:1,solution:"Known = 7.5 + 10 + 8 + 6.5 = 32 hrs. Mon+Fri = 52 − 32 = <strong>20 hours (Option B)</strong>."},
   {id:9,topic:"Everyday Mathematics",topicClass:"topic-everyday",text:"A room is 12 m wide, covered with 1800 square tiles (40 cm side each). Find the room's length.",sub:"",options:["24 m","30 m","20 m","18 m"],answer:0,solution:"Tile area = 0.4×0.4 = 0.16 m². Total = 1800×0.16 = 288 m². Length = 288÷12 = <strong>24 m (Option A)</strong>."},
-  {id:10,topic:"Achievers Section",topicClass:"topic-achiever",text:"<strong>Statement-I:</strong> Rectangle 20 m × 15 m doubled → new perimeter 140 m.<br><br><strong>Statement-II:</strong> Square with all sides summing to 160 m → sum of 2 opposite sides = 80 m.",sub:"",options:["Both I and II are true","Both I and II are false","I is true, II is false","I is false, II is true"],answer:0,solution:"I: Doubled→40×30, P = 2(40+30) = 140 ✓<br>II: Side = 160÷4 = 40, two opposite = 40+40 = 80 ✓<br>Answer: <strong>Both true (Option A)</strong>."}
+  {id:10,topic:"Achievers Section",topicClass:"topic-achiever",text:"<strong>Statement-I:</strong> Rectangle 20 m × 15 m doubled → new perimeter 140 m.<br><br><strong>Statement-II:</strong> Square with all sides summing to 160 m → sum of 2 opposite sides = 80 m.",sub:"",options:["Both I and II are true","Both I and II are false","I is true, II is false","I is false, II is true"],answer:0,solution:"I: Doubled→40×30, P = 2(40+30) = 140 ✓<br>II: Side = 160÷4 = 40, two opposite = 40+40 = 80 ✓<br>Answer: <strong>Both I and II are true (Option A)</strong>."}
 ];
 
 /* ======= STATE ======= */
@@ -355,13 +355,8 @@ function renderQuestion(i){
   }
 
   let nextHTML='';
-  if(done){
-    const nx=findNext(i);
-    if(nx!==null){
-      nextHTML=`<div style="text-align:center;margin-top:16px"><button class="btn btn-next" onclick="goTo(${nx})">Next Question →</button></div>`;
-    }else{
-      nextHTML=`<div style="text-align:center;margin-top:16px"><button class="btn btn-results" onclick="showResults()">🎉 See My Results</button></div>`;
-    }
+  if(done && findNext(i)===null){
+    nextHTML=`<div style="text-align:center;margin-top:16px"><button class="btn btn-results" onclick="showResults()">🎉 See My Results</button></div>`;
   }
 
   document.getElementById('questionCard').innerHTML=`

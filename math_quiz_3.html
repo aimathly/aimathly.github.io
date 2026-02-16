@@ -355,13 +355,8 @@ function renderQuestion(i){
   }
 
   let nextHTML='';
-  if(done){
-    const nx=findNext(i);
-    if(nx!==null){
-      nextHTML=`<div style="text-align:center;margin-top:16px"><button class="btn btn-next" onclick="goTo(${nx})">Next Question →</button></div>`;
-    }else{
-      nextHTML=`<div style="text-align:center;margin-top:16px"><button class="btn btn-results" onclick="showResults()">🎉 See My Results</button></div>`;
-    }
+  if(done && findNext(i)===null){
+    nextHTML=`<div style="text-align:center;margin-top:16px"><button class="btn btn-results" onclick="showResults()">🎉 See My Results</button></div>`;
   }
 
   document.getElementById('questionCard').innerHTML=`
@@ -392,8 +387,13 @@ function lockIn(i){
   stopActiveTimer();
   S.submitted[i]=true;
   S.attempted++;
-  renderQuestion(i);
   updateChrome();
+  const nx=findNext(i);
+  if(nx!==null){
+    setTimeout(()=>goTo(nx),400);
+  }else{
+    renderQuestion(i);
+  }
 }
 function findNext(from){
   for(let j=1;j<=Q;j++){const idx=(from+j)%Q;if(!S.submitted[idx])return idx}
