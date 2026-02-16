@@ -80,6 +80,13 @@
   .topic-tag{font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:8px;text-transform:uppercase;letter-spacing:.3px}
   .tag-logic{background:#EDE7F6;color:#5E35B1}.tag-math{background:#E3F2FD;color:#1565C0}.tag-everyday{background:#FFF3E0;color:#E65100}.tag-achiever{background:#FCE4EC;color:#C62828}
   .card-arrow{font-size:1.5rem;color:var(--border);transition:all .3s ease;flex-shrink:0}
+  .card-score{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:.82rem;font-weight:700}
+  .score-badge{padding:4px 12px;border-radius:8px;font-size:.78rem;font-weight:700}
+  .score-badge-great{background:#E6FBF4;color:#047857}
+  .score-badge-good{background:#E3F2FD;color:#1565C0}
+  .score-badge-ok{background:#FFF3E0;color:#E65100}
+  .score-badge-low{background:#FDE8EE;color:#be123c}
+  .score-badge-none{background:var(--bg);color:var(--text-light);border:1px solid var(--border)}
   .coming-soon-card{background:var(--card);border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;opacity:.7}
   .coming-soon-icon{font-size:2rem;margin-bottom:8px}
   .coming-soon-text{font-family:'Fredoka',sans-serif;font-weight:600;font-size:1rem;color:var(--text-light)}
@@ -159,9 +166,9 @@
   <div class="main">
     <div class="section-title">📋 Practice Quizzes</div>
     <div class="practice-grid">
-      <a class="practice-card" href="math_quiz.html"><div class="card-stripe stripe-1"></div><div class="card-body"><div class="card-info"><div class="card-title">Practice #1<span class="card-number-badge">10 Questions</span></div><div class="card-meta"><div class="card-meta-item">📅 14 Feb 2026</div><div class="card-meta-item">⏱️ ~15 min</div><div class="card-meta-item">⭐ Mixed difficulty</div></div><div class="card-topics"><span class="topic-tag tag-logic">Logical Reasoning</span><span class="topic-tag tag-math">Mathematical Reasoning</span><span class="topic-tag tag-everyday">Everyday Math</span><span class="topic-tag tag-achiever">Achievers</span></div></div><div class="card-arrow">→</div></div></a>
-      <a class="practice-card" href="math_quiz_2.html"><div class="card-stripe stripe-2"></div><div class="card-body"><div class="card-info"><div class="card-title">Practice #2<span class="card-number-badge">10 Questions</span></div><div class="card-meta"><div class="card-meta-item">📅 15 Feb 2026</div><div class="card-meta-item">⏱️ ~15 min</div><div class="card-meta-item">⭐ Mixed difficulty</div></div><div class="card-topics"><span class="topic-tag tag-logic">Logical Reasoning</span><span class="topic-tag tag-math">Mathematical Reasoning</span><span class="topic-tag tag-everyday">Everyday Math</span><span class="topic-tag tag-achiever">Achievers</span></div></div><div class="card-arrow">→</div></div></a>
-      <a class="practice-card" href="math_quiz_3.html"><div class="card-stripe stripe-3"></div><div class="card-body"><div class="card-info"><div class="card-title">Practice #3<span class="card-number-badge">10 Questions</span></div><div class="card-meta"><div class="card-meta-item">📅 16 Feb 2026</div><div class="card-meta-item">⏱️ ~20 min</div><div class="card-meta-item">🔥 High difficulty</div></div><div class="card-topics"><span class="topic-tag tag-logic">Logical Reasoning</span><span class="topic-tag tag-math">Mathematical Reasoning</span><span class="topic-tag tag-everyday">Everyday Math</span><span class="topic-tag tag-achiever">Achievers</span></div></div><div class="card-arrow">→</div></div></a>
+      <a class="practice-card" href="math_quiz.html"><div class="card-stripe stripe-1"></div><div class="card-body"><div class="card-info"><div class="card-title">Practice #1<span class="card-number-badge">10 Questions</span></div><div class="card-meta"><div class="card-meta-item">📅 14 Feb 2026</div><div class="card-meta-item">⏱️ ~15 min</div><div class="card-meta-item">⭐ Mixed difficulty</div></div><div class="card-topics"><span class="topic-tag tag-logic">Logical Reasoning</span><span class="topic-tag tag-math">Mathematical Reasoning</span><span class="topic-tag tag-everyday">Everyday Math</span><span class="topic-tag tag-achiever">Achievers</span></div><div class="card-score" id="score_practice_1"></div></div><div class="card-arrow">→</div></div></a>
+      <a class="practice-card" href="math_quiz_2.html"><div class="card-stripe stripe-2"></div><div class="card-body"><div class="card-info"><div class="card-title">Practice #2<span class="card-number-badge">10 Questions</span></div><div class="card-meta"><div class="card-meta-item">📅 15 Feb 2026</div><div class="card-meta-item">⏱️ ~15 min</div><div class="card-meta-item">⭐ Mixed difficulty</div></div><div class="card-topics"><span class="topic-tag tag-logic">Logical Reasoning</span><span class="topic-tag tag-math">Mathematical Reasoning</span><span class="topic-tag tag-everyday">Everyday Math</span><span class="topic-tag tag-achiever">Achievers</span></div><div class="card-score" id="score_practice_2"></div></div><div class="card-arrow">→</div></div></a>
+      <a class="practice-card" href="math_quiz_3.html"><div class="card-stripe stripe-3"></div><div class="card-body"><div class="card-info"><div class="card-title">Practice #3<span class="card-number-badge">10 Questions</span></div><div class="card-meta"><div class="card-meta-item">📅 16 Feb 2026</div><div class="card-meta-item">⏱️ ~20 min</div><div class="card-meta-item">🔥 High difficulty</div></div><div class="card-topics"><span class="topic-tag tag-logic">Logical Reasoning</span><span class="topic-tag tag-math">Mathematical Reasoning</span><span class="topic-tag tag-everyday">Everyday Math</span><span class="topic-tag tag-achiever">Achievers</span></div><div class="card-score" id="score_practice_3"></div></div><div class="card-arrow">→</div></div></a>
       <div class="coming-soon-card"><div class="coming-soon-icon">🚀</div><div class="coming-soon-text">More practice quizzes coming soon!</div><div class="coming-soon-sub">Check back later for Practice #4, #5, and more.</div></div>
     </div>
   </div>
@@ -172,7 +179,7 @@
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,sendEmailVerification,updateProfile}from"https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-import{getFirestore,doc,setDoc,getDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import{getFirestore,doc,setDoc,getDoc,updateDoc,collection,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig={
   apiKey:"AIzaSyC1nF_1BiUq9PlNrtToxFgPQT9Z3KMv51M",
@@ -194,7 +201,7 @@ window._signIn=signInWithEmailAndPassword;
 window._signOut=signOut;
 window._sendVerification=sendEmailVerification;
 window._updateProfile=updateProfile;
-window._doc=doc;window._setDoc=setDoc;window._getDoc=getDoc;window._updateDoc=updateDoc;window._serverTimestamp=serverTimestamp;
+window._doc=doc;window._setDoc=setDoc;window._getDoc=getDoc;window._updateDoc=updateDoc;window._collection=collection;window._getDocs=getDocs;window._serverTimestamp=serverTimestamp;
 
 // Auth state listener — core routing
 onAuthStateChanged(auth,async(user)=>{
@@ -217,6 +224,33 @@ onAuthStateChanged(auth,async(user)=>{
       }
     }catch(e){console.log('Firestore:',e.message)}
     showScreen('appScreen');
+
+    // Load and display scores for each practice
+    try{
+      const scoresRef=collection(db,'users',user.uid,'bestScores');
+      const snap=await getDocs(scoresRef);
+      snap.forEach(d=>{
+        const data=d.data();
+        const el=document.getElementById('score_'+data.practiceId);
+        if(!el)return;
+        const pct=data.lastScore;
+        const correct=data.lastCorrect;
+        let cls,icon;
+        if(pct>=90){cls='score-badge-great';icon='🏆'}
+        else if(pct>=70){cls='score-badge-good';icon='🌟'}
+        else if(pct>=50){cls='score-badge-ok';icon='👍'}
+        else{cls='score-badge-low';icon='💪'}
+        el.innerHTML=`<span class="score-badge ${cls}">${icon} Last: ${correct}/10 (${pct}%)</span>`;
+      });
+
+      // Mark unplayed ones
+      ['practice_1','practice_2','practice_3'].forEach(pid=>{
+        const el=document.getElementById('score_'+pid);
+        if(el&&!el.innerHTML){
+          el.innerHTML='<span class="score-badge score-badge-none">Not attempted yet</span>';
+        }
+      });
+    }catch(e){console.log('Load scores:',e.message)}
   }
 });
 </script>

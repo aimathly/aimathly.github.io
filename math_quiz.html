@@ -519,9 +519,60 @@ function showResults(){
   area.classList.remove('hidden');
   area.innerHTML=html;
   window.scrollTo({top:0,behavior:'smooth'});
+
+  // Save results to Firestore
+  saveResultsToFirestore(cc,wc,pct,tt,res);
 }
 
 init();
+</script>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import{getFirestore,doc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+const app=initializeApp({apiKey:"AIzaSyC1nF_1BiUq9PlNrtToxFgPQT9Z3KMv51M",authDomain:"aimathly.firebaseapp.com",projectId:"aimathly",storageBucket:"aimathly.firebasestorage.app",messagingSenderId:"822455826333",appId:"1:822455826333:web:e308eed90c331b73a5e174"});
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+const PRACTICE_ID="practice_1";
+
+let currentUser=null;
+onAuthStateChanged(auth,(user)=>{currentUser=user});
+
+window.saveResultsToFirestore=async function(correct,wrong,pct,totalTime,details){
+  if(!currentUser)return;
+  try{
+    const attemptId=Date.now().toString();
+    const ref=doc(db,'users',currentUser.uid,'results',PRACTICE_ID+'_'+attemptId);
+    await setDoc(ref,{
+      practiceId:PRACTICE_ID,
+      practiceName:"Practice #1",
+      correct,wrong,percentage:pct,totalTime,
+      date:serverTimestamp(),
+      questions:details.map(r=>({
+        questionIndex:r.i,
+        correct:r.ok,
+        selectedOption:r.sel,
+        timeTaken:r.t
+      }))
+    });
+
+    // Also save/update best score
+    const bestRef=doc(db,'users',currentUser.uid,'bestScores',PRACTICE_ID);
+    await setDoc(bestRef,{
+      practiceId:PRACTICE_ID,
+      practiceName:"Practice #1",
+      lastScore:pct,
+      lastCorrect:correct,
+      lastDate:serverTimestamp(),
+      totalAttempts:(window._attemptCount||0)+1
+    },{merge:true});
+
+    console.log('Results saved to Firestore');
+  }catch(e){console.log('Save error:',e.message)}
+};
 </script>
 </body>
 </html>
