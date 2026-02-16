@@ -275,7 +275,7 @@ function clearProgress(){
   try{localStorage.removeItem(SAVE_KEY)}catch(e){}
 }
 function markCompleted(cc,pct){
-  try{localStorage.setItem(SAVE_KEY+'_done',JSON.stringify({correct:cc,percentage:pct,date:new Date().toISOString()}))}catch(e){}
+  try{localStorage.setItem(SAVE_KEY+'_done',JSON.stringify({correct:cc,percentage:pct,date:new Date().toISOString(),selected:S.selected,timers:S.timers}))}catch(e){}
 }
 function retakeQuiz(){
   clearProgress();
@@ -334,6 +334,15 @@ document.addEventListener('visibilitychange',()=>{
 /* ======= INIT ======= */
 function init(){
   renderNav();
+  const done=getCompleted();
+  if(done&&done.selected){
+    S.selected=done.selected;
+    S.timers=done.timers||Array(Q).fill(0);
+    S.submitted=Array(Q).fill(true);
+    S.attempted=Q;
+    showResults(true);
+    return;
+  }
   const restored=restoreProgress();
   if(restored&&S.attempted>0){
     updateChrome();
@@ -473,11 +482,11 @@ function speedInfo(t){
 }
 
 /* ======= RESULTS ======= */
-function showResults(){
+function showResults(isReplay){
   if(S.attempted<Q)return;
   S.finished=true;
   stopActiveTimer();
-  clearProgress();
+  if(!isReplay) clearProgress();
 
   let cc=0,tt=0;
   const res=questions.map((q,i)=>{
@@ -588,16 +597,17 @@ function showResults(){
   area.innerHTML=html;
   window.scrollTo({top:0,behavior:'smooth'});
 
-  markCompleted(cc,pct);
-
-  function trySave(retries){
-    if(typeof saveResultsToFirestore==='function'){
-      saveResultsToFirestore(cc,wc,pct,tt,res);
-    }else if(retries>0){
-      setTimeout(()=>trySave(retries-1),500);
+  if(!isReplay){
+    markCompleted(cc,pct);
+    function trySave(retries){
+      if(typeof saveResultsToFirestore==='function'){
+        saveResultsToFirestore(cc,wc,pct,tt,res);
+      }else if(retries>0){
+        setTimeout(()=>trySave(retries-1),500);
+      }
     }
+    trySave(10);
   }
-  trySave(10);
 }
 
 init();
