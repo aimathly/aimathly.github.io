@@ -247,6 +247,22 @@ onAuthStateChanged(auth,async(user)=>{
       ['practice_1','practice_2','practice_3'].forEach(pid=>{
         const el=document.getElementById('score_'+pid);
         if(el&&!el.innerHTML){
+          // Check localStorage fallback
+          try{
+            const local=localStorage.getItem('quiz_progress_'+pid+'_done');
+            if(local){
+              const d=JSON.parse(local);
+              const pct=d.percentage;
+              const correct=d.correct;
+              let cls,icon;
+              if(pct>=90){cls='score-badge-great';icon='🏆'}
+              else if(pct>=70){cls='score-badge-good';icon='🌟'}
+              else if(pct>=50){cls='score-badge-ok';icon='👍'}
+              else{cls='score-badge-low';icon='💪'}
+              el.innerHTML=`<span class="score-badge ${cls}">${icon} Last: ${correct}/10 (${pct}%)</span>`;
+              return;
+            }
+          }catch(e){}
           el.innerHTML='<span class="score-badge score-badge-none">Not attempted yet</span>';
         }
       });

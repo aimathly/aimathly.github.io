@@ -274,6 +274,17 @@ function restoreProgress(){
 function clearProgress(){
   try{localStorage.removeItem(SAVE_KEY)}catch(e){}
 }
+function markCompleted(cc,pct){
+  try{localStorage.setItem(SAVE_KEY+'_done',JSON.stringify({correct:cc,percentage:pct,date:new Date().toISOString()}))}catch(e){}
+}
+function retakeQuiz(){
+  clearProgress();
+  try{localStorage.removeItem(SAVE_KEY+'_done')}catch(e){}
+  location.reload();
+}
+function getCompleted(){
+  try{const raw=localStorage.getItem(SAVE_KEY+'_done');return raw?JSON.parse(raw):null}catch(e){return null}
+}
 
 /* ======= TIMER MANAGEMENT ======= */
 function startTimerFor(i){
@@ -570,15 +581,23 @@ function showResults(){
     });
   }
 
-  html+=`<div style="text-align:center;padding-bottom:48px"><button class="btn-retake" onclick="location.reload()">🔄 Retake Quiz</button></div>`;
+  html+=`<div style="text-align:center;padding-bottom:48px"><button class="btn-retake" onclick="retakeQuiz()">🔄 Retake Quiz</button></div>`;
 
   const area=document.getElementById('resultsArea');
   area.classList.remove('hidden');
   area.innerHTML=html;
   window.scrollTo({top:0,behavior:'smooth'});
 
-  // Save results to Firestore
-  saveResultsToFirestore(cc,wc,pct,tt,res);
+  markCompleted(cc,pct);
+
+  function trySave(retries){
+    if(typeof saveResultsToFirestore==='function'){
+      saveResultsToFirestore(cc,wc,pct,tt,res);
+    }else if(retries>0){
+      setTimeout(()=>trySave(retries-1),500);
+    }
+  }
+  trySave(10);
 }
 
 init();
